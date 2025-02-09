@@ -23,18 +23,21 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
     baseURL: "/",
-    cdnURL: "https://worldwidehisa.github.io/",
+    cdnURL:
+      process.env.NODE_ENV === "test"
+        ? "/"
+        : "https://worldwidehisa.github.io/",
   },
-  modules: ["@nuxt/content"],
+  modules: ["@nuxt/content", "@nuxtjs/tailwindcss"],
   typescript: {
     shim: false, // VScodeの拡張機能を使うためにfalse
     strict: true, // 型チェックの厳格化
     typeCheck: false, // 開発、build時の型チェックを有効に。vue-tscとtypescriptのインストールが必要
   },
-  // tailwindcss: {
-  //   cssPath: ["~/assets/css/tailwind.css", { injectPosition: "first" }],
-  //   configPath: "tailwind.config",
-  // },
+  tailwindcss: {
+    cssPath: ["~/assets/css/tailwind.css", { injectPosition: "first" }],
+    configPath: "tailwind.config",
+  },
   content: {
     sources: {
       content: {
@@ -45,3 +48,4 @@ export default defineNuxtConfig({
     },
   },
 });
+1;
