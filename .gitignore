@@ -29,3 +29,6 @@ logs
 # Docker
 .bash_history
 .node_repl_history
+
+#temp
+.working_memo.txt
