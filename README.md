@@ -1,5 +1,5 @@
 # ローカルの動かし方
-npx http-server .output/public
+npm run generate && npx http-server .output/public
 
 # Nuxt 3 Minimal Starter
 
