@@ -1,4 +1,5 @@
 # ローカルの動かし方
+rm -rf .nuxt dist .output && \
 npm run generate && npx http-server .output/public
 
 # Nuxt 3 Minimal Starter
