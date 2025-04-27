@@ -3,7 +3,7 @@
     <div class="max-w-4xl mx-auto px-4 py-16">
       <h1 class="text-3xl font-bold mb-8"></h1>
       <ArticleList
-        title=""
+        title="記事一覧"
         :articles="articles"
         :show-more-link="false"
       />
