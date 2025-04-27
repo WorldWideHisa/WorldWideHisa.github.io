@@ -1,0 +1,11 @@
+# 依存物
+node_modules/
+.nuxt/
+.output/
+
+# 大量記事・画像は初期読み込みから外す
+content/articles/**/*.md
+content/articles/**/images/
+
+# ビルドアーティファクト
+dist/
