@@ -6,6 +6,14 @@ npm run generate && npx http-server .output/public
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
+## フォントについて
+
+このプロジェクトでは「Zen Maru Gothic（ZEN丸ゴシック）」フォントを使用しています。
+このフォントは[SIL Open Font License (OFL) 1.1](https://scripts.sil.org/OFL)の下で提供されています。
+
+- デザイン: Yoshimichi Ohira
+- 提供: 株式会社ゼンフォント / Google Fonts
+
 ## Setup
 
 Make sure to install the dependencies:

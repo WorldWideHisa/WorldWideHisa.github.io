@@ -15,6 +15,17 @@
           {{ formatDate(article.date) }}
         </p>
 
+        <!-- タグ（小さい文字で控えめに表示） -->
+        <div v-if="article.tags && article.tags.length > 0" class="mt-3 flex flex-wrap gap-2">
+          <span
+            v-for="tag in article.tags"
+            :key="tag"
+            class="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-md"
+          >
+            #{{ tag }}
+          </span>
+        </div>
+
         <!-- 区切り線 -->
         <hr class="my-8 border-gray-200">
       </div>
