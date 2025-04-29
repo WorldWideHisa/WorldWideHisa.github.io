@@ -29,6 +29,18 @@ export default defineNuxtConfig({
       process.env.NODE_ENV === "test"
         ? "/"
         : "https://worldwidehisa.net/",
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/icons/favicon-32x32.png' },
+        { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/icons/favicon-48x48.png' },
+        { rel: 'icon', type: 'image/png', sizes: '64x64', href: '/icons/favicon-64x64.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/icons/apple-touch-icon.png' },
+        { rel: 'manifest', href: '/icons/site.webmanifest' }
+      ],
+      meta: [
+        { name: 'theme-color', content: '#ffffff' }
+      ]
+    }
   },
 
   modules: ["@nuxt/content", "@nuxtjs/tailwindcss"],
