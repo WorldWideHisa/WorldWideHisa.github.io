@@ -1,7 +1,7 @@
 <template>
-  <div class="max-w-3xl mx-auto px-4 py-16">
+  <div class="max-w-3xl mx-auto px-4 py-14">
     <!-- ヘッダーセクション -->
-    <div class="mb-12 text-center">
+    <div class="mb-10 text-center">
       <h1 class="text-4xl font-bold mb-4">World Wide Hisa</h1>
       <p class="text-lg text-gray-700">WEB技術や趣味のことをひっそりと書いておくところです</p>
     </div>

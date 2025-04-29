@@ -28,9 +28,12 @@
     <div v-if="showMoreLink" class="text-center mt-8">
       <nuxt-link
         :to="moreLink"
-        class="inline-block px-6 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700"
+        class="inline-flex items-center text-gray-600 hover:text-gray-900 border-b border-gray-300 hover:border-gray-600 transition-colors pb-1"
       >
         {{ moreLinkText }}
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </nuxt-link>
     </div>
   </div>

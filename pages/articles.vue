@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-3xl mx-auto px-4 py-16">
+  <div class="max-w-3xl mx-auto px-4 py-14">
     <!-- 記事リスト（タグ検索機能付き） -->
     <ArticleList
       title="記事一覧"

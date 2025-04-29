@@ -1,7 +1,7 @@
 <template>
-  <div class="max-w-3xl mx-auto px-4 py-16">
+  <div class="max-w-3xl mx-auto px-4 py-14">
     <!-- ヘッダーセクション -->
-    <div class="mb-12 text-center">
+    <div class="mb-10 text-center">
       <h1 class="text-4xl font-bold mb-4">About Me</h1>
       <p class="text-lg text-gray-700">
         このブログの管理人についての紹介ページです
@@ -9,7 +9,7 @@
     </div>
 
     <!-- プロフィールセクション -->
-    <div class="mb-12">
+    <div class="mb-10">
       <h2 class="text-2xl font-semibold mb-4">プロフィール</h2>
       <div class="mt-6">
         <p class="text-xl font-medium mb-4">Hisa</p>
