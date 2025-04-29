@@ -4,6 +4,7 @@
     <ArticleThumbnail
       :src="article.thumbnail"
       :alt="article.title"
+      :to="article._path"
     />
     <!-- 記事情報（右側） -->
     <div class="flex-grow">
