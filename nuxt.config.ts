@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     cdnURL:
       process.env.NODE_ENV === "test"
         ? "/"
-        : "https://worldwidehisa.github.io/",
+        : "https://worldwidehisa.net/",
   },
 
   modules: ["@nuxt/content", "@nuxtjs/tailwindcss"],
@@ -56,4 +56,3 @@ export default defineNuxtConfig({
 
   compatibilityDate: "2025-04-27"
 });
-1;
