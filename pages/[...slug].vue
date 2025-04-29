@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <div class="max-w-3xl mx-auto px-4 py-16">
+  <div class="max-w-3xl mx-auto px-4 py-16">
       <!-- 記事のメタ情報 -->
       <div v-if="article" class="mb-12">
         <!-- タイトル（左揃え） -->
@@ -24,7 +23,6 @@
       <article class="prose prose-lg max-w-none prose-h1:text-3xl prose-h1:font-semibold prose-h2:text-2xl prose-h2:font-semibold prose-h3:text-xl prose-h3:font-semibold prose-h4:text-lg prose-h4:font-semibold">
         <ContentDoc :path="`/${slugPath}`" />
       </article>
-    </div>
   </div>
 </template>
 

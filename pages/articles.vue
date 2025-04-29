@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <div class="max-w-4xl mx-auto px-4 py-16">
-      <h1 class="text-3xl font-bold mb-8"></h1>
-      <ArticleList
-        title="記事一覧"
-        :articles="articles"
-        :show-more-link="false"
-      />
-    </div>
+  <div class="max-w-3xl mx-auto px-4 py-16">
+    <!-- 記事リスト（タグ検索機能付き） -->
+    <ArticleList
+      title="記事一覧"
+      :articles="articles"
+      :show-more-link="false"
+    />
   </div>
 </template>
 
@@ -21,17 +19,18 @@ interface Article {
   date?: string;
   description?: string;
   thumbnail?: string;
+  tags?: string[];
   [key: string]: any;
 }
 
-// すべての記事を取得（制限なし）
+// すべての記事を取得
 const { data: allArticles } = await useAsyncData("allArticles", () =>
   queryContent("/articles")
     .sort({ date: -1 }) // 日付の降順でソート
     .find()
 );
 
-// nullの場合は空配列を使用
+// 記事データ
 const articles = computed(() => {
   return (allArticles.value || []) as Article[];
 });

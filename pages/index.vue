@@ -1,18 +1,19 @@
 <template>
-  <div>
-    <!-- メイン -->
-    <div class="pt-32 pb-10 text-center">
+  <div class="max-w-3xl mx-auto px-4 py-16">
+    <!-- ヘッダーセクション -->
+    <div class="mb-12 text-center">
       <h1 class="text-4xl font-bold mb-4">World Wide Hisa</h1>
-      <p class="text-lg">WEB技術や趣味のことをひっそりと書いておくところです</p>
+      <p class="text-lg text-gray-700">WEB技術や趣味のことをひっそりと書いておくところです</p>
     </div>
     <!-- 最新記事リスト -->
-    <div class="max-w-4xl mx-auto px-4 pb-16">
+    <div>
       <ArticleList
         title="最新記事"
         :articles="articles"
         :show-more-link="true"
         more-link="/articles"
         more-link-text="すべての記事を見る"
+        :show-search="false"
       />
     </div>
   </div>
@@ -35,7 +36,7 @@ interface Article {
 const { data: latestArticles } = await useAsyncData("latestArticles", () =>
   queryContent("/articles")
     .sort({ date: -1 }) // 日付の降順でソート
-    .limit(5) // 3件に制限
+    .limit(3) // 3件に制限
     .find()
 );
 
