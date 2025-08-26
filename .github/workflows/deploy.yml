@@ -27,7 +27,7 @@ jobs:
       - name: Checkout private blog content
         uses: actions/checkout@v4
         with:
-          repository: hisaro/wwh-blog-content
+          repository: WorldWideHisa/wwh-blog-content
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: ./content
           clean: true
