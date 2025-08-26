@@ -66,7 +66,7 @@ export default defineNuxtConfig({
     },
     ignores: [
       'README.md',
-      '**/template/**',
+      'template/**',
       'template.md'
     ],
   },
