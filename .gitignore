@@ -31,5 +31,7 @@ logs
 .node_repl_history
 
 #temp
-.working_memo.txt
-content/articles/template/template.md
+.memo.txt
+
+# Content from private repository
+content/
