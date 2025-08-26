@@ -32,8 +32,10 @@ jobs:
           path: ./content
           clean: true
       
-      - name: Remove README files from content
-        run: find ./content -name "README.md" -delete
+      - name: Remove README files and templates from content
+        run: |
+          find ./content -name "README.md" -delete
+          rm -rf ./content/articles/template/
       
       - name: Setup Node
         uses: actions/setup-node@v4
