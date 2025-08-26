@@ -64,6 +64,9 @@ export default defineNuxtConfig({
         base: resolve(__dirname, "content", "articles"),
       },
     },
+    ignores: [
+      '/README.md'
+    ],
   },
 
   compatibilityDate: "2025-04-27"
