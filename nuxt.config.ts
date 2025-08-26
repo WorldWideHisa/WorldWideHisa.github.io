@@ -62,13 +62,12 @@ export default defineNuxtConfig({
         driver: "fs",
         prefix: "/articles",
         base: resolve(__dirname, "content", "articles"),
+        exclude: [
+          "README.md",
+          "template/**"
+        ]
       },
     },
-    ignores: [
-      'README.md',
-      'template/**',
-      'template.md'
-    ],
   },
 
   compatibilityDate: "2025-04-27"
