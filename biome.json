@@ -7,8 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**/*.js", "**/*.ts", "**/*.vue", "**/*.json"],
-    "experimentalScannerIgnores": [
+    "ignore": [
       ".nuxt",
       "node_modules",
       "dist",
@@ -20,6 +19,9 @@
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2
+  },
+  "organizeImports": {
+    "enabled": true
   },
   "linter": {
     "enabled": true,

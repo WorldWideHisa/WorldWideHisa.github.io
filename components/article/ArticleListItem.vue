@@ -28,8 +28,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { formatDate } from "../utils/DateFormatter";
+import { computed } from 'vue';
+import { formatDate } from '../utils/DateFormatter';
+import ArticleThumbnail from './ArticleThumbnail.vue';
 
 interface Article {
   _path?: string;
@@ -45,7 +46,7 @@ const props = defineProps<{
 }>();
 
 // 日付のフォーマット
-const _formattedDate = computed(() => {
-  return formatDate(props.article.date || "");
+const formattedDate = computed(() => {
+  return formatDate(props.article.date || '');
 });
 </script>

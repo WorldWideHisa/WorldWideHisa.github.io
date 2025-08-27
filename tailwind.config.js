@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Zen Maru Gothic"', "sans-serif"],
-        heading: ['"Zen Maru Gothic"', "sans-serif"],
+        sans: ['"Zen Maru Gothic"', 'sans-serif'],
+        heading: ['"Zen Maru Gothic"', 'sans-serif'],
       },
       typography: {
         DEFAULT: {
@@ -13,23 +13,23 @@ export default {
             fontFamily: '"Zen Maru Gothic", sans-serif',
             h1: {
               fontFamily: '"Zen Maru Gothic", sans-serif',
-              fontWeight: "700",
+              fontWeight: '700',
             },
             h2: {
               fontFamily: '"Zen Maru Gothic", sans-serif',
-              fontWeight: "700",
+              fontWeight: '700',
             },
             h3: {
               fontFamily: '"Zen Maru Gothic", sans-serif',
-              fontWeight: "500",
+              fontWeight: '500',
             },
             h4: {
               fontFamily: '"Zen Maru Gothic", sans-serif',
-              fontWeight: "500",
+              fontWeight: '500',
             },
-          },
-        },
-      },
+          }
+        }
+      }
     },
   },
   plugins: [require("@tailwindcss/typography")],

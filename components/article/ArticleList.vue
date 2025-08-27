@@ -40,7 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import ArticleListItem from './ArticleListItem.vue';
+import { ref, computed } from 'vue';
 
 interface Article {
   _path?: string;
@@ -53,42 +54,38 @@ interface Article {
 }
 
 // デフォルト値の設定
-const props = withDefaults(
-  defineProps<{
-    title: string;
-    articles: Article[];
-    showMoreLink?: boolean;
-    moreLink?: string;
-    moreLinkText?: string;
-    showSearch?: boolean;
-  }>(),
-  {
-    showSearch: true,
-  },
-);
+const props = withDefaults(defineProps<{
+  title: string;
+  articles: Article[];
+  showMoreLink?: boolean;
+  moreLink?: string;
+  moreLinkText?: string;
+  showSearch?: boolean;
+}>(), {
+  showSearch: true
+});
 
 // 検索関連
-const searchQuery = ref("");
+const searchQuery = ref('');
 
 // キーワードでフィルタリングされた記事（タイトル、タグ、年で検索）
-const _filteredArticles = computed(() => {
+const filteredArticles = computed(() => {
   if (!searchQuery.value) {
     return props.articles;
   }
 
   const query = searchQuery.value.toLowerCase();
 
-  return props.articles.filter((article) => {
+  return props.articles.filter(article => {
     // タイトル検索
     const titleMatch = article.title.toLowerCase().includes(query);
 
     // タグ検索
-    const tagMatch = article.tags?.some((tag) =>
-      tag.toLowerCase().includes(query),
-    );
+    const tagMatch = article.tags &&
+      article.tags.some(tag => tag.toLowerCase().includes(query));
 
     // 年検索（日付から年を抽出）
-    const yearMatch = article.date?.includes(query);
+    const yearMatch = article.date && article.date.includes(query);
 
     return titleMatch || tagMatch || yearMatch;
   });

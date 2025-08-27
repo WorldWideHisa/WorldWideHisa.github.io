@@ -7,6 +7,6 @@ export const formatDate = (dateString: string): string => {
   return date.toLocaleDateString("ja-JP", {
     year: "numeric",
     month: "long",
-    day: "numeric",
+    day: "numeric"
   });
 };
