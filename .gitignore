@@ -26,9 +26,9 @@ logs
 # VSCode
 .vscode*/
 
-# Docker
-.bash_history
-.node_repl_history
+# Claude settings
+.claude
+
 
 #temp
 .memo.txt
