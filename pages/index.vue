@@ -20,8 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import ArticleList from '~/components/article/ArticleList.vue';
+import { computed } from "vue";
 
 // ArticleList.vueと同じ型定義を使用
 interface Article {
@@ -37,11 +36,11 @@ const { data: latestArticles } = await useAsyncData("latestArticles", () =>
   queryContent("/articles")
     .sort({ date: -1 }) // 日付の降順でソート
     .limit(3) // 3件に制限
-    .find()
+    .find(),
 );
 
 // nullの場合は空配列を使用
-const articles = computed(() => {
+const _articles = computed(() => {
   return (latestArticles.value || []) as Article[];
 });
 </script>

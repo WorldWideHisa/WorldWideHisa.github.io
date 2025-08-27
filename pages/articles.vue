@@ -10,8 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import ArticleList from '~/components/article/ArticleList.vue';
+import { computed } from "vue";
 
 interface Article {
   _path?: string;
@@ -27,11 +26,11 @@ interface Article {
 const { data: allArticles } = await useAsyncData("allArticles", () =>
   queryContent("/articles")
     .sort({ date: -1 }) // 日付の降順でソート
-    .find()
+    .find(),
 );
 
 // 記事データ
-const articles = computed(() => {
+const _articles = computed(() => {
   return (allArticles.value || []) as Article[];
 });
 </script>

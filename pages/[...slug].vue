@@ -39,17 +39,15 @@
 
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { formatDate } from '~/components/utils/DateFormatter';
 
 const route = useRoute();
 const slug = route.params.slug;
 
 // slugが配列かどうかをチェック
-const slugPath = Array.isArray(slug) ? slug.join('/') : slug;
+const slugPath = Array.isArray(slug) ? slug.join("/") : slug;
 
 // 記事データを取得
 const { data: article } = await useAsyncData(`article-${slugPath}`, () =>
-  queryContent(slugPath)
-    .findOne()
+  queryContent(slugPath).findOne(),
 );
 </script>
