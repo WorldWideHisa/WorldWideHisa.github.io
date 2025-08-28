@@ -29,9 +29,5 @@ logs
 # Claude settings
 .claude
 
-
 #temp
 .memo.txt
-
-# Content from private repository
-content/
