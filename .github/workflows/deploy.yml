@@ -5,7 +5,8 @@ name: Deploy Nuxt site to Pages
 on:
   push:
     branches: ["main"]
-  workflow_dispatch:
+  repository_dispatch:
+    types: [content-updated]
 
 permissions:
   contents: read
@@ -23,7 +24,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Checkout private blog content
         uses: actions/checkout@v4
         with:
@@ -31,12 +32,12 @@ jobs:
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: ./content
           clean: true
-      
+
       - name: Remove README files and templates from content
         run: |
           find ./content -name "README.md" -delete
           rm -rf ./content/articles/template/
-      
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
