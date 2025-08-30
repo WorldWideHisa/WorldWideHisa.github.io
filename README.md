@@ -1,10 +1,44 @@
-# ローカルの動かし方
-rm -rf .nuxt dist .output && \
+# WorldWideHisa Blog
+[![Deploy Nuxt site to Pages](https://github.com/WorldWideHisa/WorldWideHisa.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/WorldWideHisa/WorldWideHisa.github.io/actions/workflows/deploy.yml)
+
+![Nuxt](https://img.shields.io/badge/Nuxt-3.11-00DC82?style=flat-square&logo=nuxt.js)
+![Vue](https://img.shields.io/badge/Vue-3.4-4FC08D?style=flat-square&logo=vue.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38B2AC?style=flat-square&logo=tailwind-css)
+
+ [worldwidehisa.net](https://worldwidehisa.net/)  
+WorldWideにHisaを馳せる個人ブログ
+
+
+
+## セットアップ
+Node.js 24 を準備してください
+```bash
+$ node -v
+v24.5.0
+```
+依存関係のインストール
+```bash
+npm install
+```
+記事を書いてローカルで確認
+```bash
 npm run generate && npx http-server .output/public
+```
 
-# Nuxt 3 Minimal Starter
+## 設計
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+### コンテンツ分離
+- **メインリポジトリ**: ブログシステム本体
+- **プライベートリポジトリ**: 記事コンテンツ管理
+- **自動連携**: 記事更新 → 自動ビルド → デプロイ
+
+といった形でコンテンツは別のprivateで管理しています。
+
+### 全体設計
+- Nuxt3, Nuxt Content による静的サイト生成（SSG）
+- Markdown + frontmatter
+- GHAによるCI/CD自動化, GitHubPagesへデプロイ
 
 ## フォントについて
 
@@ -13,75 +47,3 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 
 - デザイン: Yoshimichi Ohira
 - 提供: 株式会社ゼンフォント / Google Fonts
-
-## Setup
-
-Make sure to install the dependencies:
-
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
