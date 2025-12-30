@@ -57,7 +57,21 @@ const { data: article } = await useAsyncData(`article-${slugPath}`, () =>
 if (article.value) {
   const siteUrl = 'https://worldwidehisa.net';
   const articleUrl = `${siteUrl}/articles/${slugPath}`;
-  const imageUrl = article.value.thumbnail ? `${siteUrl}${article.value.thumbnail}` : `${siteUrl}/icons/apple-touch-icon.png`;
+  // 画像URLの生成 - thumbnail が有効なURLかチェック
+  let imageUrl = `${siteUrl}/icons/android-chrome-512x512.png`; // デフォルト画像（512x512）
+  
+  if (article.value.thumbnail) {
+    if (article.value.thumbnail.startsWith('http://') || article.value.thumbnail.startsWith('https://')) {
+      // 完全なURLの場合はそのまま使用
+      imageUrl = article.value.thumbnail;
+    } else if (article.value.thumbnail.startsWith('/')) {
+      // 相対パス（/から始まる）の場合
+      imageUrl = `${siteUrl}${article.value.thumbnail}`;
+    } else if (article.value.thumbnail !== "サムネリンク" && article.value.thumbnail.trim() !== "") {
+      // その他の場合（ファイル名のみなど）
+      imageUrl = `${siteUrl}/images/${article.value.thumbnail}`;
+    }
+  }
 
   useSeoMeta({
     title: article.value.title,
