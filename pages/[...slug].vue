@@ -59,7 +59,7 @@ if (article.value) {
   const articleUrl = `${siteUrl}/articles/${slugPath}`;
   // 画像URLの生成 - thumbnail が有効なURLかチェック
   let imageUrl = `${siteUrl}/icons/android-chrome-512x512.png`; // デフォルト画像（512x512）
-  
+
   if (article.value.thumbnail) {
     if (article.value.thumbnail.startsWith('http://') || article.value.thumbnail.startsWith('https://')) {
       // 完全なURLの場合はそのまま使用

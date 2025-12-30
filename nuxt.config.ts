@@ -43,7 +43,7 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: ["@nuxt/content", "@nuxtjs/tailwindcss"],
+  modules: ["@nuxt/content", "@nuxtjs/tailwindcss", "@nuxtjs/sitemap"],
 
   typescript: {
     shim: false, // VScodeの拡張機能を使うためにfalse
@@ -70,5 +70,10 @@ export default defineNuxtConfig({
     },
   },
 
-  compatibilityDate: "2025-04-27"
+  compatibilityDate: "2025-04-27",
+
+  // Sitemap設定
+  site: {
+    url: 'https://worldwidehisa.net'
+  }
 });
