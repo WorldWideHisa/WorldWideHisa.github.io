@@ -35,11 +35,15 @@
         <ContentDoc :path="`/${slugPath}`" />
       </article>
   </div>
+
+  <!-- スクロールトップボタン -->
+  <ScrollToTopButton />
 </template>
 
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import { formatDate } from '~/components/utils/DateFormatter';
+import ScrollToTopButton from '~/components/ui/ScrollToTopButton.vue';
 
 const route = useRoute();
 const slug = route.params.slug;
