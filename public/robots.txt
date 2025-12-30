@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# サイトマップの場所
+Sitemap: https://worldwidehisa.net/sitemap.xml
+
+# クロール不要なディレクトリ（もしあれば）
+Disallow: /api/
+Disallow: /_nuxt/
+Disallow: /admin/
