@@ -1,5 +1,6 @@
 <template>
-  <li class="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+  <li class="flex items-start gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      @click="handleCardClick">
     <!-- サムネイル（左側） -->
     <ArticleThumbnail
       :src="article.thumbnail"
@@ -49,4 +50,11 @@ const props = defineProps<{
 const formattedDate = computed(() => {
   return formatDate(props.article.date || '');
 });
+
+// カードクリック時の処理
+const handleCardClick = () => {
+  if (props.article._path) {
+    navigateTo(props.article._path);
+  }
+};
 </script>
