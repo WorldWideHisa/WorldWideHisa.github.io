@@ -31,7 +31,7 @@
       </div>
 
       <!-- 記事本文 -->
-      <article class="prose prose-lg max-w-none prose-h1:text-3xl prose-h1:font-semibold prose-h2:text-2xl prose-h2:font-semibold prose-h3:text-xl prose-h3:font-semibold prose-h4:text-lg prose-h4:font-semibold">
+      <article class="prose prose-lg max-w-none prose-h1:text-3xl prose-h1:font-semibold prose-h2:text-2xl prose-h2:font-semibold prose-h3:text-xl prose-h3:font-semibold prose-h4:text-lg prose-h4:font-semibold prose-a:break-words prose-a:break-all">
         <ContentDoc :path="`/${slugPath}`" />
       </article>
   </div>
