@@ -1,5 +1,18 @@
 <template>
   <div class="max-w-3xl mx-auto px-4 py-16">
+      <!-- 戻るボタン -->
+      <div class="mb-8">
+        <button
+          @click="$router.push('/articles')"
+          class="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm font-medium"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          記事一覧に戻る
+        </button>
+      </div>
+
       <!-- 記事のメタ情報 -->
       <div v-if="article" class="mb-12">
         <!-- タイトル（左揃え） -->
@@ -42,8 +55,8 @@
 
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { formatDate } from '~/components/utils/DateFormatter';
 import ScrollToTopButton from '~/components/ui/ScrollToTopButton.vue';
+import { formatDate } from '~/components/utils/DateFormatter';
 
 const route = useRoute();
 const slug = route.params.slug;
@@ -65,7 +78,7 @@ if (article.value) {
   let imageUrl = `${siteUrl}/icons/android-chrome-512x512.png`; // デフォルト画像（512x512）
 
   // thumbnailが有効な値かチェック
-  const hasValidThumbnail = article.value.thumbnail && 
+  const hasValidThumbnail = article.value.thumbnail &&
     article.value.thumbnail.trim() !== "";
 
   if (hasValidThumbnail) {
@@ -80,7 +93,7 @@ if (article.value) {
       imageUrl = `${siteUrl}/images/${article.value.thumbnail}`;
     }
   }
-  
+
   // デバッグ用（開発環境でのみ表示）
   if (process.env.NODE_ENV === 'development') {
     console.log('Image URL generated:', imageUrl);
