@@ -52,4 +52,26 @@ const { data: article } = await useAsyncData(`article-${slugPath}`, () =>
   queryContent(slugPath)
     .findOne()
 );
+
+// SEO用のmetaタグを設定
+if (article.value) {
+  const siteUrl = 'https://worldwidehisa.net';
+  const articleUrl = `${siteUrl}/${slugPath}`;
+  const imageUrl = article.value.thumbnail ? `${siteUrl}${article.value.thumbnail}` : `${siteUrl}/icons/apple-touch-icon.png`;
+
+  useSeoMeta({
+    title: article.value.title,
+    description: article.value.description || `${article.value.title}についての記事です`,
+    ogTitle: article.value.title,
+    ogDescription: article.value.description || `${article.value.title}についての記事です`,
+    ogImage: imageUrl,
+    ogUrl: articleUrl,
+    ogType: 'article',
+    ogSiteName: 'WorldWide Hisa',
+    twitterCard: 'summary_large_image',
+    twitterTitle: article.value.title,
+    twitterDescription: article.value.description || `${article.value.title}についての記事です`,
+    twitterImage: imageUrl,
+  });
+}
 </script>
