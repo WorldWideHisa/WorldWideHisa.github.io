@@ -56,21 +56,31 @@ const { data: article } = await useAsyncData(`article-${slugPath}`, () =>
 // SEO用のmetaタグを設定
 if (article.value) {
   const siteUrl = 'https://worldwidehisa.net';
-  const articleUrl = `${siteUrl}/articles/${slugPath}`;
+  const articleUrl = `${siteUrl}/${slugPath}`;
   // 画像URLの生成 - thumbnail が有効なURLかチェック
   let imageUrl = `${siteUrl}/icons/android-chrome-512x512.png`; // デフォルト画像（512x512）
 
-  if (article.value.thumbnail) {
+  // thumbnailが有効な値かチェック
+  const hasValidThumbnail = article.value.thumbnail && 
+    article.value.thumbnail.trim() !== "";
+
+  if (hasValidThumbnail) {
     if (article.value.thumbnail.startsWith('http://') || article.value.thumbnail.startsWith('https://')) {
       // 完全なURLの場合はそのまま使用
       imageUrl = article.value.thumbnail;
     } else if (article.value.thumbnail.startsWith('/')) {
       // 相対パス（/から始まる）の場合
       imageUrl = `${siteUrl}${article.value.thumbnail}`;
-    } else if (article.value.thumbnail !== "サムネリンク" && article.value.thumbnail.trim() !== "") {
-      // その他の場合（ファイル名のみなど）
+    } else {
+      // その他の場合（ファイル名のみなど）- /images/ 配下にファイルがあると仮定
       imageUrl = `${siteUrl}/images/${article.value.thumbnail}`;
     }
+  }
+  
+  // デバッグ用（開発環境でのみ表示）
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Image URL generated:', imageUrl);
+    console.log('Original thumbnail value:', article.value.thumbnail);
   }
 
   useSeoMeta({
