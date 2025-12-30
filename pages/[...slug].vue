@@ -56,7 +56,7 @@ const { data: article } = await useAsyncData(`article-${slugPath}`, () =>
 // SEO用のmetaタグを設定
 if (article.value) {
   const siteUrl = 'https://worldwidehisa.net';
-  const articleUrl = `${siteUrl}/${slugPath}`;
+  const articleUrl = `${siteUrl}/articles/${slugPath}`;
   const imageUrl = article.value.thumbnail ? `${siteUrl}${article.value.thumbnail}` : `${siteUrl}/icons/apple-touch-icon.png`;
 
   useSeoMeta({
