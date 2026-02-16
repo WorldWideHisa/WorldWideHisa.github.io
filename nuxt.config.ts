@@ -26,21 +26,49 @@ export default defineNuxtConfig({
   app: {
     baseURL: "/",
     cdnURL:
-      process.env.NODE_ENV === "test"
-        ? "/"
-        : "https://worldwidehisa.net/",
+      process.env.NODE_ENV === "test" ? "/" : "https://worldwidehisa.net/",
     head: {
       link: [
-        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/icons/favicon-32x32.png' },
-        { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/icons/favicon-48x48.png' },
-        { rel: 'icon', type: 'image/png', sizes: '64x64', href: '/icons/favicon-64x64.png' },
-        { rel: 'apple-touch-icon', sizes: '180x180', href: '/icons/apple-touch-icon.png' },
-        { rel: 'manifest', href: '/icons/site.webmanifest' }
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "32x32",
+          href: "/icons/favicon-32x32.png",
+        },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "48x48",
+          href: "/icons/favicon-48x48.png",
+        },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "64x64",
+          href: "/icons/favicon-64x64.png",
+        },
+        {
+          rel: "apple-touch-icon",
+          sizes: "180x180",
+          href: "/icons/apple-touch-icon.png",
+        },
+        { rel: "manifest", href: "/icons/site.webmanifest" },
       ],
       meta: [
-        { name: 'theme-color', content: '#ffffff' }
-      ]
-    }
+        { name: "theme-color", content: "#ffffff" },
+        { property: "og:site_name", content: "World Wide Hisa" },
+        {
+          property: "og:image",
+          content: "https://worldwidehisa.net/images/ogp-default.png",
+        },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        {
+          name: "twitter:image",
+          content: "https://worldwidehisa.net/images/ogp-default.png",
+        },
+      ],
+    },
   },
 
   modules: ["@nuxt/content", "@nuxtjs/tailwindcss", "@nuxtjs/sitemap"],
@@ -62,10 +90,7 @@ export default defineNuxtConfig({
         driver: "fs",
         prefix: "/articles",
         base: resolve(__dirname, "content", "articles"),
-        exclude: [
-          "README.md",
-          "template/**"
-        ]
+        exclude: ["README.md", "template/**"],
       },
     },
   },
@@ -74,6 +99,6 @@ export default defineNuxtConfig({
 
   // Sitemap設定
   site: {
-    url: 'https://worldwidehisa.net'
-  }
+    url: "https://worldwidehisa.net",
+  },
 });

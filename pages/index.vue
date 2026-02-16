@@ -23,6 +23,14 @@
 import { computed } from 'vue';
 import ArticleList from '~/components/article/ArticleList.vue';
 
+useSeoMeta({
+  title: 'World Wide Hisa',
+  description: 'WEB技術や趣味のことをひっそりと書いておくところです',
+  ogTitle: 'World Wide Hisa',
+  ogDescription: 'WEB技術や趣味のことをひっそりと書いておくところです',
+  ogUrl: 'https://worldwidehisa.net',
+});
+
 // ArticleList.vueと同じ型定義を使用
 interface Article {
   _path: string;

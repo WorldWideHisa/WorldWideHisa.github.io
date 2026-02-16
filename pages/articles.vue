@@ -13,6 +13,14 @@
 import { computed } from 'vue';
 import ArticleList from '~/components/article/ArticleList.vue';
 
+useSeoMeta({
+  title: '記事一覧 | World Wide Hisa',
+  description: 'World Wide Hisaの記事一覧です',
+  ogTitle: '記事一覧 | World Wide Hisa',
+  ogDescription: 'World Wide Hisaの記事一覧です',
+  ogUrl: 'https://worldwidehisa.net/articles',
+});
+
 interface Article {
   _path?: string;
   title: string;

@@ -1,3 +1,13 @@
+<script setup lang="ts">
+useSeoMeta({
+  title: 'About | World Wide Hisa',
+  description: 'World Wide Hisaについて',
+  ogTitle: 'About | World Wide Hisa',
+  ogDescription: 'World Wide Hisaについて',
+  ogUrl: 'https://worldwidehisa.net/about',
+});
+</script>
+
 <template>
   <div class="max-w-3xl mx-auto px-4 py-14">
     <!-- ヘッダーセクション -->
