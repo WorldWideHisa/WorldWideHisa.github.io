@@ -71,13 +71,14 @@ const { data: article } = await useAsyncData(`article-${slugPath}`, () =>
 );
 
 // SEO用のmetaタグを設定
-if (article.value) {
-  const siteUrl = 'https://worldwidehisa.net';
-  const articleUrl = `${siteUrl}${route.path}`;
-  let imageUrl = `${siteUrl}/images/ogp-default.png`;
+const siteUrl = 'https://worldwidehisa.net';
+const articleUrl = `${siteUrl}${route.path}`;
 
-  const hasValidThumbnail = article.value.thumbnail &&
-    article.value.thumbnail.trim() !== '';
+useHead(() => {
+  if (!article.value) return {};
+
+  let imageUrl = `${siteUrl}/images/ogp-default.png`;
+  const hasValidThumbnail = article.value.thumbnail && article.value.thumbnail.trim() !== '';
 
   if (hasValidThumbnail) {
     if (article.value.thumbnail.startsWith('http://') || article.value.thumbnail.startsWith('https://')) {
@@ -89,19 +90,21 @@ if (article.value) {
     }
   }
 
-  useSeoMeta({
+  return {
     title: article.value.title,
-    description: article.value.description || `${article.value.title}についての記事です`,
-    ogTitle: article.value.title,
-    ogDescription: article.value.description || `${article.value.title}についての記事です`,
-    ogImage: imageUrl,
-    ogUrl: articleUrl,
-    ogType: 'article',
-    ogSiteName: 'World Wide Hisa',
-    twitterCard: 'summary_large_image',
-    twitterTitle: article.value.title,
-    twitterDescription: article.value.description || `${article.value.title}についての記事です`,
-    twitterImage: imageUrl,
-  });
-}
+    meta: [
+      { name: 'description', content: article.value.description || `${article.value.title}についての記事です` },
+      { property: 'og:title', content: article.value.title },
+      { property: 'og:description', content: article.value.description || `${article.value.title}についての記事です` },
+      { property: 'og:image', content: imageUrl },
+      { property: 'og:url', content: articleUrl },
+      { property: 'og:type', content: 'article' },
+      { property: 'og:site_name', content: 'World Wide Hisa' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: article.value.title },
+      { name: 'twitter:description', content: article.value.description || `${article.value.title}についての記事です` },
+      { name: 'twitter:image', content: imageUrl },
+    ]
+  };
+});
 </script>
