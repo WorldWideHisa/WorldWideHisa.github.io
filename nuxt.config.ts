@@ -71,7 +71,11 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/content", "@nuxtjs/tailwindcss", "@nuxtjs/sitemap"],
+  modules: ["@nuxt/content", "@nuxtjs/tailwindcss", "@nuxtjs/sitemap", "nuxt-gtag"],
+
+  gtag: {
+    id: process.env.NUXT_PUBLIC_GA_ID,
+  },
 
   typescript: {
     shim: false, // VScodeの拡張機能を使うためにfalse
