@@ -14,9 +14,9 @@
   "dependencies": {
     "@nuxt/content": "^2.12.1",
     "@nuxtjs/sitemap": "^7.5.0",
+    "@zadigetvoltaire/nuxt-gtm": "^0.0.13",
     "glob": "^10.4.2",
     "nuxt": "^3.11.2",
-    "nuxt-gtag": "^4.1.0",
     "vue": "^3.4.27",
     "vue-router": "^4.3.2"
   },

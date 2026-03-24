@@ -71,10 +71,17 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/content", "@nuxtjs/tailwindcss", "@nuxtjs/sitemap", "nuxt-gtag"],
+  modules: ["@nuxt/content", "@nuxtjs/tailwindcss", "@nuxtjs/sitemap", "@zadigetvoltaire/nuxt-gtm"],
 
-  gtag: {
-    id: process.env.NUXT_PUBLIC_GA_ID,
+  gtm: {
+    id: "GTM-PLRSZJ6B",
+    defer: false,
+    compatibility: false,
+    enabled: true,
+    debug: process.env.NODE_ENV === "development",
+    loadScript: true,
+    enableRouterSync: true,
+    trackOnNextTick: false,
   },
 
   typescript: {
