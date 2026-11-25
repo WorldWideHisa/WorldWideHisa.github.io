@@ -28,6 +28,9 @@ export default defineNuxtConfig({
     cdnURL:
       process.env.NODE_ENV === "test" ? "/" : "https://worldwidehisa.net/",
     head: {
+      htmlAttrs: {
+        lang: "ja",
+      },
       link: [
         {
           rel: "icon",
