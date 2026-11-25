@@ -51,10 +51,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            .ouput/public
+            .output/public
             .nuxt
-          key: ${{ runner.os }}-nuxt-build-${{ hashFiles('.ouput/public') }}
+          key: ${{ runner.os }}-nuxt-build-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
           restore-keys: |
+            ${{ runner.os }}-nuxt-build-${{ hashFiles('package-lock.json') }}-
             ${{ runner.os }}-nuxt-build-
       - name: Install dependencies
         run: npm ci
