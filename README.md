@@ -25,6 +25,8 @@ npm install
 ```bash
 npm run generate && npx http-server .output/public
 ```
+`npm run generate` は Nuxt の静的書き出しのあと、続けて Pagefind で検索インデックスを作ります。
+`npm run dev` では検索インデックスがないため、検索ページ（`/search`）は動きません。
 
 ## 設計
 
@@ -39,6 +41,12 @@ npm run generate && npx http-server .output/public
 - Nuxt3, Nuxt Content による静的サイト生成（SSG）
 - Markdown + frontmatter
 - GHAによるCI/CD自動化, GitHubPagesへデプロイ
+- [Pagefind](https://pagefind.app/) による全文検索
+
+### 全文検索（Pagefind）
+- ビルド後の HTML を Pagefind が読み、検索インデックスを `.output/public/pagefind/` に出力します（設定は `pagefind.yml`）
+- 索引の対象は記事ページの `data-pagefind-body` を付けた範囲（タイトル・説明・タグ・本文）だけです
+- 検索はブラウザ内で完結し、サーバーは不要です（`pages/search.vue` と `composables/usePagefind.ts`）
 
 ## フォントについて
 

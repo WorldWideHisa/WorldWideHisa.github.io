@@ -13,40 +13,47 @@
         </button>
       </div>
 
-      <!-- 記事のメタ情報 -->
-      <div v-if="article" class="mb-12">
-        <!-- タイトル（左揃え） -->
-        <h1 class="text-4xl font-bold mb-6">{{ article.title }}</h1>
+      <!--
+        data-pagefind-body: 全文検索（Pagefind）の索引対象はこの範囲だけ。
+        戻るボタンやフッターなどは検索結果に混ざらない。
+        記事が見つからなかったページは索引しないよう、記事があるときだけ付ける。
+      -->
+      <div :data-pagefind-body="article ? '' : undefined">
+        <!-- 記事のメタ情報 -->
+        <div v-if="article" class="mb-12">
+          <!-- タイトル（左揃え） -->
+          <h1 class="text-4xl font-bold mb-6">{{ article.title }}</h1>
 
-        <!-- 説明文（左揃え） -->
-        <p v-if="article.description" class="text-lg text-gray-700 mb-4">
-          {{ article.description }}
-        </p>
+          <!-- 説明文（左揃え） -->
+          <p v-if="article.description" class="text-lg text-gray-700 mb-4">
+            {{ article.description }}
+          </p>
 
-        <!-- 日付（左揃え） -->
-        <p class="text-sm text-gray-500">
-          {{ formatDate(article.date) }}
-        </p>
+          <!-- 日付（左揃え）。検索結果の表示用に meta として渡し、本文の索引からは外す -->
+          <p class="text-sm text-gray-500" data-pagefind-meta="date" data-pagefind-ignore>
+            {{ formatDate(article.date) }}
+          </p>
 
-        <!-- タグ（小さい文字で控えめに表示） -->
-        <div v-if="article.tags && article.tags.length > 0" class="mt-3 flex flex-wrap gap-2">
-          <span
-            v-for="tag in article.tags"
-            :key="tag"
-            class="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-md"
-          >
-            #{{ tag }}
-          </span>
+          <!-- タグ（小さい文字で控えめに表示） -->
+          <div v-if="article.tags && article.tags.length > 0" class="mt-3 flex flex-wrap gap-2">
+            <span
+              v-for="tag in article.tags"
+              :key="tag"
+              class="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-md"
+            >
+              #{{ tag }}
+            </span>
+          </div>
+
+          <!-- 区切り線 -->
+          <hr class="my-8 border-gray-200">
         </div>
 
-        <!-- 区切り線 -->
-        <hr class="my-8 border-gray-200">
+        <!-- 記事本文 -->
+        <article class="prose prose-lg max-w-none prose-h1:text-3xl prose-h1:font-semibold prose-h2:text-2xl prose-h2:font-semibold prose-h3:text-xl prose-h3:font-semibold prose-h4:text-lg prose-h4:font-semibold prose-a:break-words prose-a:break-all">
+          <ContentDoc :path="`/${slugPath}`" />
+        </article>
       </div>
-
-      <!-- 記事本文 -->
-      <article class="prose prose-lg max-w-none prose-h1:text-3xl prose-h1:font-semibold prose-h2:text-2xl prose-h2:font-semibold prose-h3:text-xl prose-h3:font-semibold prose-h4:text-lg prose-h4:font-semibold prose-a:break-words prose-a:break-all">
-        <ContentDoc :path="`/${slugPath}`" />
-      </article>
   </div>
 
   <!-- スクロールトップボタン -->
