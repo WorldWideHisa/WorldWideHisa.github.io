@@ -14,7 +14,7 @@
       <section class="bg-white rounded-lg shadow-sm p-5">
         <h2 class="text-lg font-bold mb-3">新しい記事を書く</h2>
         <form class="flex flex-wrap items-center gap-2" @submit.prevent="createArticle">
-          <span class="text-sm text-gray-500">{{ articlesPrefix }}/</span>
+          <span class="text-sm text-gray-500">articles/</span>
           <input
             v-model="newSlug"
             type="text"
@@ -45,7 +45,10 @@
 
         <p v-if="error" class="text-sm text-red-600">記事一覧を読み込めませんでした: {{ error.message }}</p>
         <p v-else-if="articles.length === 0" class="text-sm text-gray-500">
-          記事がありません。content/articles に記事リポジトリを置いているか確認してください。
+          記事がありません。記事リポジトリの場所（.env の BLOG_CONTENT_DIR）を確認してください。
+        </p>
+        <p v-if="articlesDir" class="text-xs text-gray-400 mb-3 break-all">
+          読み書きしているフォルダ: {{ articlesDir }}
         </p>
 
         <ul class="divide-y bg-white rounded-lg shadow-sm">
@@ -97,17 +100,15 @@ interface AdminArticle {
   tags: string[];
 }
 
-const articlesPrefix = "content/articles";
-
 // 管理画面はローカル専用なので、サーバー側レンダリングせずブラウザで取得する
-const { data, error, refresh } = await useFetch<AdminArticle[]>(
-  "/api/_admin/articles",
-  {
-    server: false,
-    default: () => [],
-  },
-);
-const articles = computed(() => data.value ?? []);
+const { data, error, refresh } = await useFetch<{
+  articlesDir: string;
+  articles: AdminArticle[];
+}>("/api/_admin/articles", {
+  server: false,
+});
+const articles = computed(() => data.value?.articles ?? []);
+const articlesDir = computed(() => data.value?.articlesDir ?? "");
 
 const newSlug = ref("");
 const creating = ref(false);
