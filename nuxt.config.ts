@@ -1,12 +1,18 @@
 import { resolve } from "path";
 import { globSync } from "glob";
 
+// 記事リポジトリ（wwh-blog-content）の場所。
+// CI ではこのリポジトリの ./content にチェックアウトされる。
+// ローカルで別の場所に clone している場合は .env の BLOG_CONTENT_DIR で指定する（例: ../wwh-blog-content）
+const contentDir = resolve(
+  __dirname,
+  process.env.BLOG_CONTENT_DIR || "content",
+);
+
 const getContentRoutes = (): string[] => {
-  const contentPath = resolve("content/**/*.md");
-  const routeNames = globSync(contentPath).map((f) => {
-    // パスを整形して返す
-    const pattern = /.*\/content/;
-    return f.replace(pattern, "").replace(".md", "");
+  // contentDir からの相対パスをそのままルートにする（例: articles/foo.md → /articles/foo）
+  const routeNames = globSync("**/*.md", { cwd: contentDir }).map((f) => {
+    return `/${f.split("\\").join("/").replace(/\.md$/, "")}`;
   });
 
   return [...routeNames];
@@ -103,7 +109,7 @@ export default defineNuxtConfig({
       content: {
         driver: "fs",
         prefix: "/articles",
-        base: resolve(__dirname, "content", "articles"),
+        base: resolve(contentDir, "articles"),
         exclude: ["README.md", "template/**"],
       },
     },
