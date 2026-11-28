@@ -28,6 +28,9 @@ npm run generate && npx http-server .output/public
 `npm run generate` は Nuxt の静的書き出しのあと、続けて Pagefind で検索インデックスを作ります。
 `npm run dev` では検索インデックスがないため、検索ページ（`/search`）は動きません。
 
+## ロードマップ
+今後の方針は [docs/roadmap.md](docs/roadmap.md) にまとめ、具体的な作業は Issue で管理しています。
+
 ## 設計
 
 ### コンテンツ分離
