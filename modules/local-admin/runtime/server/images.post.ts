@@ -4,19 +4,32 @@ import {
   getRequestHeader,
   readMultipartFormData,
 } from "h3";
-import { assertLocalRequest, resolveArticlePath } from "./_shared";
 import {
   getConverterUrl,
   getImageUploadConfig,
   imagePrefixForArticle,
   publicUrlForKey,
 } from "./_images";
-import { listObjects, objectExists, putObject } from "./_s3";
+import { type S3Config, listObjects, objectExists, putObject } from "./_s3";
+import { assertLocalRequest, resolveArticlePath } from "./_shared";
 
 const MAX_UPLOAD_BYTES = 30 * 1024 * 1024; // iPhone の写真でも十分な上限
 const ACCEPTED = /\.(png|jpe?g|webp|heic|heif)$/i;
 // ファイル名は毎回新しいので、ブラウザや Cloudflare に 1 年間キャッシュしてもらう
 const CACHE_CONTROL = "public, max-age=31536000, immutable";
+
+/**
+ * 連番の決定〜アップロードを 1 枚ずつ順番に行うための鎖。
+ * 複数枚を同時にドロップすると、何もしなければ同じ番号を取り合って
+ * 後から保存した画像で上書きしてしまうため、この部分だけは並べて実行しない。
+ * （変換は時間がかかるので、そちらは同時に進めてよい）
+ */
+let saveQueue: Promise<unknown> = Promise.resolve();
+function runInOrder<T>(task: () => Promise<T>): Promise<T> {
+  const result = saveQueue.then(task);
+  saveQueue = result.catch(() => {});
+  return result;
+}
 
 /**
  * 画像を受け取り、hisa-compress で変換してから R2 にアップロードする。
@@ -52,36 +65,10 @@ export default defineEventHandler(async (event) => {
   // 1. 変換（hisa-compress）
   const converted = await convert(image.data, image.filename);
 
-  // 2. 連番を決める（一覧の取得は Class A 操作 1 回）
+  // 2〜3 は 1 枚ずつ順番に行う（同時に同じ番号を使わないように）
   const prefix = imagePrefixForArticle(articleFile);
-  const existing = await listObjects(config.s3, prefix);
-  let next =
-    existing.reduce((max, obj) => {
-      const m = obj.key.slice(prefix.length).match(/^(\d+)\.[a-z0-9]+$/i);
-      return m ? Math.max(max, Number(m[1])) : max;
-    }, 0) + 1;
-
-  // 3. 念のため存在確認をしてからアップロード（上書き防止）
-  let key = "";
-  for (let i = 0; i < 5; i++, next++) {
-    const candidate = `${prefix}${String(next).padStart(2, "0")}.${converted.extension}`;
-    if (!(await objectExists(config.s3, candidate))) {
-      key = candidate;
-      break;
-    }
-  }
-  if (!key) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "空いているファイル名が見つかりませんでした",
-    });
-  }
-  await putObject(
-    config.s3,
-    key,
-    converted.data,
-    converted.contentType,
-    CACHE_CONTROL,
+  const key = await runInOrder(() =>
+    saveWithNextNumber(config.s3, prefix, converted),
   );
 
   return {
@@ -93,6 +80,44 @@ export default defineEventHandler(async (event) => {
     originalSize: image.data.byteLength,
   };
 });
+
+async function saveWithNextNumber(
+  s3: S3Config,
+  prefix: string,
+  converted: Awaited<ReturnType<typeof convert>>,
+) {
+  // 2. 連番を決める（一覧の取得は Class A 操作 1 回）
+  const existing = await listObjects(s3, prefix);
+  let next =
+    existing.reduce((max, obj) => {
+      const m = obj.key.slice(prefix.length).match(/^(\d+)\.[a-z0-9]+$/i);
+      return m ? Math.max(max, Number(m[1])) : max;
+    }, 0) + 1;
+
+  // 3. 念のため存在確認をしてからアップロード（上書き防止）
+  let key = "";
+  for (let i = 0; i < 5; i++, next++) {
+    const candidate = `${prefix}${String(next).padStart(2, "0")}.${converted.extension}`;
+    if (!(await objectExists(s3, candidate))) {
+      key = candidate;
+      break;
+    }
+  }
+  if (!key) {
+    throw createError({
+      statusCode: 409,
+      statusMessage: "空いているファイル名が見つかりませんでした",
+    });
+  }
+  await putObject(
+    s3,
+    key,
+    converted.data,
+    converted.contentType,
+    CACHE_CONTROL,
+  );
+  return key;
+}
 
 async function convert(data: Buffer, filename: string) {
   const form = new FormData();
