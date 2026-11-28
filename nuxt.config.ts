@@ -113,6 +113,12 @@ export default defineNuxtConfig({
         exclude: ["README.md", "template/**"],
       },
     },
+    markdown: {
+      // 段落の中の改行（Enter 1回）を、そのまま <br>（改行）として表示する。
+      // 通常の Markdown では Enter 1回の改行は無視され、前後の行がつながって表示される。
+      // 管理画面（/_admin）のプレビューも同じ設定で変換されるので、自動で同じ表示になる。
+      remarkPlugins: ["remark-breaks"],
+    },
   },
 
   compatibilityDate: "2025-04-27",
