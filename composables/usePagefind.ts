@@ -7,7 +7,8 @@
  *   2. ブラウザはこの composable 経由で /pagefind/pagefind.js を読み込み、
  *      必要なインデックスの断片だけをダウンロードして検索する（サーバー不要）。
  *
- * `npm run dev` では /pagefind/ が存在しないため、検索は使えない。
+ * `npm run dev` では /pagefind/ が存在しないため、読み込みは失敗する
+ * （呼び出し側で、タイトル・タグ・年の絞り込みだけに切り替える）。
  * 動作確認は `npm run generate && npx http-server .output/public` で行う。
  */
 
@@ -83,10 +84,11 @@ export const usePagefind = () => {
   /**
    * キーワードで検索する。
    * 入力中に次の検索が始まった場合は null を返す（古い結果で上書きしないため）。
+   * 記事一覧の絞り込みに使うので、既定ではヒットした記事を 100 件まで取る。
    */
   const search = async (
     term: string,
-    limit = 20,
+    limit = 100,
   ): Promise<{ total: number; items: SearchItem[] } | null> => {
     const pagefind = await loadPagefind();
     const result = await pagefind.debouncedSearch(term, {}, 300);

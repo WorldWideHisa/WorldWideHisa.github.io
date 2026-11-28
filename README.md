@@ -26,7 +26,7 @@ npm install
 npm run generate && npx http-server .output/public
 ```
 `npm run generate` は Nuxt の静的書き出しのあと、続けて Pagefind で検索インデックスを作ります。
-`npm run dev` では検索インデックスがないため、検索ページ（`/search`）は動きません。
+`npm run dev` では検索インデックスがないため、記事一覧の検索バーは本文を検索せず、タイトル・タグ・年での絞り込みだけになります。
 
 ## ロードマップ
 今後の方針は [docs/roadmap.md](docs/roadmap.md) にまとめ、具体的な作業は Issue で管理しています。
@@ -49,7 +49,8 @@ npm run generate && npx http-server .output/public
 ### 全文検索（Pagefind）
 - ビルド後の HTML を Pagefind が読み、検索インデックスを `.output/public/pagefind/` に出力します（設定は `pagefind.yml`）
 - 索引の対象は記事ページの `data-pagefind-body` を付けた範囲（タイトル・説明・タグ・本文）だけです
-- 検索はブラウザ内で完結し、サーバーは不要です（`pages/search.vue` と `composables/usePagefind.ts`）
+- 記事一覧（`/articles`）の検索バーから使います。タイトル・タグ・年での絞り込みに加えて、本文に一致する記事も表示します（`components/article/ArticleList.vue` と `composables/usePagefind.ts`）
+- 検索はブラウザ内で完結し、サーバーは不要です。インデックスが無いときはタイトル・タグ・年の絞り込みだけで動きます
 
 ## フォントについて
 

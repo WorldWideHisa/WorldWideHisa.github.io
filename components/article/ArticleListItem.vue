@@ -24,6 +24,16 @@
       <p v-if="article.description" class="text-sm text-gray-700">
         {{ article.description }}
       </p>
+
+      <!--
+        本文検索で一致したときの抜粋。Pagefind が本文をエスケープしたうえで
+        一致語を <mark> で囲んだ HTML なので、v-html で表示する
+      -->
+      <p
+        v-if="excerpt"
+        class="mt-2 text-sm text-gray-600 [&_mark]:bg-yellow-100 [&_mark]:text-gray-900 [&_mark]:px-0.5 [&_mark]:rounded"
+        v-html="excerpt"
+      />
     </div>
   </li>
 </template>
@@ -44,6 +54,8 @@ interface Article {
 
 const props = defineProps<{
   article: Article;
+  /** 本文検索で一致したときの抜粋（HTML） */
+  excerpt?: string;
 }>();
 
 // 日付のフォーマット

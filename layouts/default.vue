@@ -7,7 +7,6 @@
       <nav class="flex justify-center space-x-8">
         <NuxtLink to="/" class="text-gray-300 hover:text-white">Home</NuxtLink>
         <NuxtLink to="/articles" class="text-gray-300 hover:text-white">Articles</NuxtLink>
-        <NuxtLink to="/search" class="text-gray-300 hover:text-white">Search</NuxtLink>
         <NuxtLink to="/about" class="text-gray-300 hover:text-white">About</NuxtLink>
       </nav>
       <p class="text-center text-sm text-gray-500 mt-3">©2025 World Wide Hisa</p>
