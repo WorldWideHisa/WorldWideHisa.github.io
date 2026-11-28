@@ -65,6 +65,7 @@ export default defineNuxtModule({
       ["/api/_admin/article", "put", "article.put.ts"],
       ["/api/_admin/article", "post", "article.post.ts"],
       ["/api/_admin/preview", "post", "preview.post.ts"],
+      ["/api/_admin/images", "get", "images.get.ts"],
       ["/api/_admin/images", "post", "images.post.ts"],
       ["/api/_admin/images/status", "get", "images-status.get.ts"],
     ] as const;

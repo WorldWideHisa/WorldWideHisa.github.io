@@ -99,6 +99,15 @@ npm run dev:admin
 
 hisa-compress を別のポートで動かすときは、`.env` に `HISA_COMPRESS_URL=http://localhost:8001` のように書きます。
 
+### この記事の画像を再利用する
+
+エディタの下の「この記事の画像」を押すと、R2 にあるこの記事のフォルダ（`articles/<記事のファイル名>/`）の画像が並びます。
+
+- 画像を選ぶと下の一覧に入るので、説明（alt）を書いて「記事に挿入」（新しくアップロードはしません）
+- 記事の中ですでに使っている画像には「使用中」と出ます（エディタの内容と URL を比べています）
+- 一覧を開いているあいだに新しくアップロードすると、一覧にもすぐ出ます
+- R2 の一覧取得（Class A 操作）は、ボタンを押して**最初に開いたときだけ** 1 回使います。閉じて開き直しても読み直しません
+
 ### 画像の URL のルール
 
 - `articles/<記事のファイル名>/01.webp`、`02.webp` … と、記事ごとのフォルダに連番で置きます
@@ -125,7 +134,7 @@ Nuxt の開発サーバー（localhost:3000）
    ├─ /api/_admin/preview … Nuxt Content と同じ変換（本番ビルドと同じ処理）で記事データにして返す
    ├─ /api/_admin/article … 記事リポジトリの articles/*.md の読み込み・保存・新規作成
    ├─ /api/_admin/articles … 記事一覧
-   └─ /api/_admin/images … 画像を hisa-compress で変換して R2 にアップロード
+   └─ /api/_admin/images … 画像を hisa-compress で変換して R2 にアップロード（POST）・記事の画像の一覧（GET）
           │
           ├─▶ hisa-compress（localhost:8000、Docker）
           └─▶ Cloudflare R2（S3 互換 API）

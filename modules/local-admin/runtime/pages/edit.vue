@@ -42,7 +42,7 @@
           @drop="onDrop"
           @paste="onPaste"
         />
-        <ImageUploader ref="uploader" :file="file" @insert="insertAtCursor" />
+        <ImageUploader ref="uploader" :file="file" :source="source" @insert="insertAtCursor" />
       </div>
       <div class="md:w-1/2 h-1/2 md:h-auto overflow-y-auto bg-gray-50">
         <p v-if="previewError" class="m-4 p-3 text-sm text-red-700 bg-red-50 rounded">

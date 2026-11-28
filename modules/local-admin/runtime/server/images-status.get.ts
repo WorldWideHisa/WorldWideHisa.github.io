@@ -1,6 +1,6 @@
 import { defineEventHandler } from "h3";
-import { assertLocalRequest } from "./_shared";
 import { getConverterUrl, missingImageConfig } from "./_images";
+import { assertLocalRequest } from "./_shared";
 
 /** 画像アップロードの準備ができているか（R2 の設定と hisa-compress の起動）を返す */
 export default defineEventHandler(async (event) => {

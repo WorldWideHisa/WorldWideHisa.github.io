@@ -3,6 +3,7 @@
     画像のアップロード待ち一覧。
     画像をドロップ・貼り付け・選択すると、すぐに変換とアップロードを始め、
     そのあいだに代替テキスト（alt）を入力してもらう。終わったら「記事に挿入」で Markdown を入れる。
+    「この記事の画像」では、すでに R2 にあるこの記事の画像を選んで、同じ流れで挿入できる。
   -->
   <div class="border-t border-gray-300 bg-gray-50 text-sm">
     <div class="px-3 py-2 flex flex-wrap items-center gap-2">
@@ -22,10 +23,48 @@
         class="hidden"
         @change="onSelect"
       >
+      <button
+        type="button"
+        class="px-2 py-1 rounded border border-gray-300 bg-white hover:bg-gray-100 disabled:opacity-50"
+        :class="{ 'bg-gray-200': libraryOpen }"
+        :disabled="!configReady"
+        :aria-expanded="libraryOpen"
+        @click="toggleLibrary"
+      >
+        この記事の画像<template v-if="library">（{{ library.length }}）</template>
+      </button>
       <span v-if="statusMessage" class="text-xs text-amber-700">{{ statusMessage }}</span>
       <span v-else class="text-xs text-gray-500">
         エディタに画像をドロップ・貼り付けしてもアップロードできます（HEIC 可）
       </span>
+    </div>
+
+    <!-- この記事のフォルダ（articles/<記事>/）にある画像。選ぶと下の一覧に入る -->
+    <div v-if="libraryOpen" class="px-3 pb-3">
+      <p v-if="libraryLoading" class="text-xs text-gray-500">R2 から読み込み中…</p>
+      <p v-else-if="libraryError" class="text-xs text-red-600">{{ libraryError }}</p>
+      <p v-else-if="library && library.length === 0" class="text-xs text-gray-500">
+        この記事の画像はまだありません（{{ libraryPrefix }}）
+      </p>
+      <ul v-else-if="library" class="max-h-48 overflow-y-auto grid grid-cols-4 sm:grid-cols-6 gap-2">
+        <li v-for="image in library" :key="image.key">
+          <button
+            type="button"
+            class="group relative block w-full aspect-square bg-gray-100 rounded overflow-hidden border border-gray-200 hover:ring-2 hover:ring-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            :title="`${image.name}（${formatSize(image.size)}）を選ぶ`"
+            @click="pick(image)"
+          >
+            <img :src="image.url" :alt="image.name" loading="lazy" class="w-full h-full object-cover">
+            <span class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] px-1 truncate text-left">
+              {{ image.name }}
+            </span>
+            <span
+              v-if="usedInArticle(image.url)"
+              class="absolute top-0.5 right-0.5 bg-green-600 text-white text-[10px] rounded px-1"
+            >使用中</span>
+          </button>
+        </li>
+      </ul>
     </div>
 
     <ul v-if="items.length > 0" class="max-h-56 overflow-y-auto px-3 pb-3 space-y-2">
@@ -42,6 +81,7 @@
           <p class="truncate text-xs text-gray-500">
             {{ item.name }}
             <template v-if="item.state === 'uploading'"> ・ 変換してアップロード中…</template>
+            <template v-else-if="item.reused"> ・ アップロード済みの画像</template>
             <template v-else-if="item.state === 'done' && item.result">
               ・ {{ formatSize(item.originalSize) }} → {{ formatSize(item.result.size) }}（{{ item.result.width }}×{{ item.result.height }}）
             </template>
@@ -81,7 +121,11 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from "vue";
 
-const props = defineProps<{ file: string }>();
+const props = defineProps<{
+  file: string;
+  /** エディタの Markdown。「使用中」の表示に使う */
+  source?: string;
+}>();
 const emit = defineEmits<{ insert: [markdown: string] }>();
 
 interface UploadResult {
@@ -100,6 +144,15 @@ interface UploadItem {
   alt: string;
   result?: UploadResult;
   error?: string;
+  /** 「この記事の画像」から選んだもの（新しくアップロードしていない） */
+  reused?: boolean;
+}
+interface LibraryImage {
+  key: string;
+  name: string;
+  url: string;
+  size: number;
+  lastModified: string;
 }
 
 const items = ref<UploadItem[]>([]);
@@ -111,11 +164,11 @@ const status = ref<{
 } | null>(null);
 let nextId = 1;
 
+const configReady = computed(
+  () => status.value !== null && status.value.missingConfig.length === 0,
+);
 const ready = computed(
-  () =>
-    status.value !== null &&
-    status.value.missingConfig.length === 0 &&
-    status.value.converterReady,
+  () => configReady.value && !!status.value?.converterReady,
 );
 const statusMessage = computed(() => {
   if (!status.value) return "";
@@ -197,6 +250,8 @@ async function upload(item: UploadItem, image: File) {
       body: form,
     });
     item.state = "done";
+    // 一覧を開いていれば、新しい画像も一覧に出す
+    if (libraryOpen.value) loadLibrary();
   } catch (e) {
     item.state = "error";
     item.error = errorMessage(e);
@@ -213,6 +268,68 @@ function insert(item: UploadItem) {
 
 function remove(item: UploadItem) {
   items.value = items.value.filter((i) => i.id !== item.id);
+}
+
+// ---- この記事の画像（R2 の一覧） ----
+const libraryOpen = ref(false);
+const libraryLoading = ref(false);
+const libraryError = ref("");
+const library = ref<LibraryImage[] | null>(null);
+const libraryPrefix = ref("");
+
+async function loadLibrary() {
+  libraryLoading.value = library.value === null;
+  libraryError.value = "";
+  try {
+    const res = await $fetch<{ prefix: string; images: LibraryImage[] }>(
+      "/api/_admin/images",
+      { query: { file: props.file } },
+    );
+    library.value = res.images;
+    libraryPrefix.value = res.prefix;
+  } catch (e) {
+    libraryError.value = errorMessage(e);
+  } finally {
+    libraryLoading.value = false;
+  }
+}
+
+function toggleLibrary() {
+  libraryOpen.value = !libraryOpen.value;
+  // R2 の一覧取得は無料枠を使うので、開いたときに 1 回だけ読む
+  if (libraryOpen.value && library.value === null) loadLibrary();
+}
+
+function usedInArticle(url: string) {
+  return !!props.source?.includes(url);
+}
+
+/** 一覧から選んだ画像を、アップロード待ちの一覧に「完了」の状態で入れる（alt を書いて挿入） */
+async function pick(image: LibraryImage) {
+  const existing = items.value.find((i) => i.result?.url === image.url);
+  const id = existing?.id ?? nextId++;
+  if (!existing) {
+    items.value.push({
+      id,
+      name: image.name,
+      originalSize: image.size,
+      state: "done",
+      alt: "",
+      reused: true,
+      result: {
+        key: image.key,
+        url: image.url,
+        width: 0,
+        height: 0,
+        size: image.size,
+        originalSize: image.size,
+      },
+    });
+  }
+  await nextTick();
+  document
+    .querySelector<HTMLInputElement>(`input[data-upload-id="${id}"]`)
+    ?.focus();
 }
 
 function onSelect(event: Event) {
