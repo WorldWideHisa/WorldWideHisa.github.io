@@ -1,0 +1,6 @@
+# Pagefind（静的サイト向け全文検索）の設定
+# `npm run generate` で Nuxt が .output/public に HTML を書き出したあと、
+# Pagefind がその HTML を読み込んで検索インデックスを .output/public/pagefind/ に作る。
+# 検索対象は data-pagefind-body を付けた要素（記事ページの本文）だけ。
+# 日本語は <html lang="ja"> から判定され、単語分割して索引される。
+site: .output/public

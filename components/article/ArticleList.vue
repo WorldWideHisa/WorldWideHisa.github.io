@@ -23,8 +23,17 @@
         v-for="(article, index) in filteredArticles"
         :key="article._path || index"
         :article="article"
+        :excerpt="excerptFor(article)"
       />
     </ul>
+
+    <!-- 検索しても1件も無いとき（本文検索の結果待ちの間は出さない） -->
+    <p
+      v-if="trimmedQuery && filteredArticles.length === 0 && !isBodySearching"
+      class="text-sm text-gray-600"
+    >
+      「{{ trimmedQuery }}」に一致する記事は見つかりませんでした。
+    </p>
     <div v-if="showMoreLink" class="text-center mt-8">
       <nuxt-link
         :to="moreLink"
@@ -41,7 +50,7 @@
 
 <script setup lang="ts">
 import ArticleListItem from './ArticleListItem.vue';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 interface Article {
   _path?: string;
@@ -67,8 +76,59 @@ const props = withDefaults(defineProps<{
 
 // 検索関連
 const searchQuery = ref('');
+const trimmedQuery = computed(() => searchQuery.value.trim());
 
-// キーワードでフィルタリングされた記事（タイトル、タグ、年で検索）
+/*
+ * 本文の全文検索（Pagefind）
+ * - 入力のたびに Pagefind で本文も検索し、一致した記事のパスと抜粋を覚えておく
+ * - 結果は「どのキーワードの結果か」と一緒に持ち、今の入力と同じときだけ使う
+ *   （入力を変えた直後に、前のキーワードの結果が混ざらないようにするため）
+ * - `npm run dev` など検索インデックスが無い環境では読み込みに失敗するので、
+ *   以降は本文検索をやめて、タイトル・タグ・年の絞り込みだけで動かす
+ */
+const { search } = usePagefind();
+const bodyResult = ref<{ term: string; excerpts: Map<string, string> } | null>(null);
+const bodySearchingTerm = ref('');
+let isPagefindAvailable = true;
+
+const isBodySearching = computed(
+  () => bodySearchingTerm.value !== '' && bodySearchingTerm.value === trimmedQuery.value,
+);
+
+const bodyMatches = computed(() =>
+  bodyResult.value && bodyResult.value.term === trimmedQuery.value
+    ? bodyResult.value.excerpts
+    : null,
+);
+
+watch(trimmedQuery, async (term) => {
+  if (!term || !props.showSearch || !isPagefindAvailable) {
+    bodySearchingTerm.value = '';
+    return;
+  }
+
+  bodySearchingTerm.value = term;
+  try {
+    const result = await search(term);
+    // 入力が続いて新しい検索に置き換わったときは何もしない
+    if (result === null || term !== trimmedQuery.value) return;
+    bodyResult.value = {
+      term,
+      excerpts: new Map(result.items.map((item) => [item.path, item.excerpt])),
+    };
+  } catch (error) {
+    isPagefindAvailable = false;
+    console.info('[search] 検索インデックスが無いため、タイトル・タグ・年での絞り込みのみ行います', error);
+  } finally {
+    if (bodySearchingTerm.value === term) bodySearchingTerm.value = '';
+  }
+});
+
+// 本文検索で一致した記事には、一致箇所の抜粋を表示する
+const excerptFor = (article: Article): string | undefined =>
+  article._path ? bodyMatches.value?.get(article._path) : undefined;
+
+// キーワードでフィルタリングされた記事（タイトル、タグ、年、本文で検索）
 const filteredArticles = computed(() => {
   if (!searchQuery.value) {
     return props.articles;
@@ -87,7 +147,10 @@ const filteredArticles = computed(() => {
     // 年検索（日付から年を抽出）
     const yearMatch = article.date && article.date.includes(query);
 
-    return titleMatch || tagMatch || yearMatch;
+    // 本文検索（Pagefind）で一致
+    const bodyMatch = !!article._path && !!bodyMatches.value?.has(article._path);
+
+    return titleMatch || tagMatch || yearMatch || bodyMatch;
   });
 });
 </script>

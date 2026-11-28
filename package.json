@@ -5,7 +5,8 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "generate": "nuxt generate",
+    "generate": "nuxt generate && npm run search:index",
+    "search:index": "pagefind",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "format": "biome format",
@@ -24,6 +25,7 @@
     "@biomejs/biome": "1.9.2",
     "@nuxtjs/tailwindcss": "^6.13.1",
     "@tailwindcss/typography": "^0.5.16",
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "pagefind": "^1.6.0"
   }
 }

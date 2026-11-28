@@ -59,10 +59,17 @@ jobs:
             ${{ runner.os }}-nuxt-build-
       - name: Install dependencies
         run: npm ci
-      - name: Static HTML export with Nuxt
+      # nuxt generate で静的 HTML を書き出したあと、続けて Pagefind が全文検索インデックスを作る
+      # （package.json の generate スクリプトに含まれている）
+      - name: Static HTML export with Nuxt and build search index
         run: npm run generate
         env:
           NUXT_PUBLIC_GA_ID: ${{ secrets.NUXT_PUBLIC_GA_ID }}
+      # 検索インデックスができていないまま公開しないよう確認する
+      - name: Verify search index
+        run: |
+          test -f ./.output/public/pagefind/pagefind.js
+          test -n "$(ls -A ./.output/public/pagefind/fragment)"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-24 h-24 bg-gray-200 rounded overflow-hidden">
+  <div class="w-24 h-24 shrink-0 bg-gray-200 rounded overflow-hidden">
     <!-- リンクがある場合はNuxtLinkでラップ -->
     <nuxt-link v-if="to" :to="to" class="block w-full h-full">
       <img
