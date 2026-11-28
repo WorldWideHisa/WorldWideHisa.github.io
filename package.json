@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "dev:admin": "node scripts/dev-admin.mjs",
     "generate": "nuxt generate && npm run search:index",
     "search:index": "pagefind",
     "preview": "nuxt preview",

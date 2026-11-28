@@ -45,6 +45,85 @@
 管理画面で書く・保存 ─▶ wwh-blog-content の .md が変わる ─▶ 記事リポジトリで commit / push ─▶ 自動で公開
 ```
 
+## 画像のアップロード（Cloudflare R2）
+
+エディタに画像をドラッグ＆ドロップ（または貼り付け・「画像を追加」ボタン）すると、
+次の流れで記事に画像を入れられます。iPhone の HEIC もそのまま入れて大丈夫です。
+
+```text
+画像をドロップ
+   ▼
+hisa-compress（Docker）で変換 … 向きを直す・位置情報などのメタ情報を消す・幅 1600px 以下の WebP にする
+   ▼
+Cloudflare R2 にアップロード … https://images.worldwidehisa.net/articles/<記事のファイル名>/01.webp
+   ▼
+説明（alt）を入力して「記事に挿入」 … カーソル位置に ![説明](URL) が入る
+```
+
+### 準備（最初の 1 回だけ）
+
+1. hisa-compress のリポジトリで Docker イメージを作る
+
+   ```bash
+   cd ../hisa-compress
+   docker build -t hisa-compress .
+   ```
+
+2. Cloudflare のダッシュボードで R2 の API トークンを作る
+   - 「R2 → API トークンを管理 → API トークンを作成」
+   - 権限は **オブジェクトの読み取りと書き込み**、対象は **画像のバケットだけ** に絞る（管理者権限のトークンは使わない）
+3. `.env` に書く（`.env.example` に同じ項目があります。`.env` は Git に入りません）
+
+   ```bash
+   R2_ACCOUNT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   R2_BUCKET=バケット名
+   R2_ACCESS_KEY_ID=xxxxxxxx
+   R2_SECRET_ACCESS_KEY=xxxxxxxx
+   R2_PUBLIC_URL=https://images.worldwidehisa.net
+   ```
+
+### 起動
+
+```bash
+npm run dev:admin
+```
+
+`npm run dev:admin` は、hisa-compress のコンテナを起動してから（すでに動いていれば何もしない）`nuxt dev` を起動します。
+画像を使わないときは、これまでどおり `npm run dev` でも構いません（その場合、画像の欄に「hisa-compress が起動していません」と出ます）。
+
+| 状況 | 動き |
+| --- | --- |
+| `hisa-compress` という名前のコンテナがある | `docker start hisa-compress` で起動 |
+| コンテナが無い | `docker run -d --name hisa-compress -p 127.0.0.1:8000:8000 hisa-compress` で作って起動 |
+| Docker が無い・イメージが無い | 案内を表示して、管理画面だけ起動 |
+
+hisa-compress を別のポートで動かすときは、`.env` に `HISA_COMPRESS_URL=http://localhost:8001` のように書きます。
+
+### この記事の画像を再利用する
+
+エディタの下の「この記事の画像」を押すと、R2 にあるこの記事のフォルダ（`articles/<記事のファイル名>/`）の画像が並びます。
+
+- 画像を選ぶと下の一覧に入るので、説明（alt）を書いて「記事に挿入」（新しくアップロードはしません）
+- 記事の中ですでに使っている画像には「使用中」と出ます（エディタの内容と URL を比べています）
+- 一覧を開いているあいだに新しくアップロードすると、一覧にもすぐ出ます
+- R2 の一覧取得（Class A 操作）は、ボタンを押して**最初に開いたときだけ** 1 回使います。閉じて開き直しても読み直しません
+
+### 画像の URL のルール
+
+- `articles/<記事のファイル名>/01.webp`、`02.webp` … と、記事ごとのフォルダに連番で置きます
+  （例: `content/articles/2025/trip.md` の画像は `articles/2025/trip/01.webp`）
+- どの記事の画像かが URL を見るだけで分かり、R2 の画面でもフォルダで整理されます
+- これまでの画像（`https://images.worldwidehisa.net/20260215-01.jpg` など）はそのまま使えます。移動はしません
+
+### 無料枠と安全のための決まり
+
+- **上書きしない**: アップロード前に同じ名前の画像が無いかを確認し、あれば次の番号にします。公開済みの画像が別の画像に変わることはありません
+- **削除機能は付けない**: 間違えて消す事故を防ぐため。消したいときは Cloudflare のダッシュボードから消します
+- **長いキャッシュ**: `Cache-Control: public, max-age=31536000, immutable` を付けます。URL ごとに中身が変わらない前提なので、ブラウザや CDN が 1 年キャッシュできます
+- **無料枠の消費**: 1 枚アップロードするごとに、一覧の取得 1 回と書き込み 1 回（Class A 操作。無料枠は月 100 万回）、存在確認 1 回（Class B 操作。無料枠は月 1,000 万回）を使います。個人ブログの使い方なら無料枠を超えることはまずありません
+- **鍵はブラウザに渡さない**: R2 の鍵は開発サーバー（Node.js）の中だけで使います。ブラウザは開発サーバーに画像を送るだけです
+- アップロードできるのは PNG / JPEG / WebP / HEIC / HEIF の 30MB までです
+
 ## しくみ
 
 ```
@@ -54,7 +133,11 @@
 Nuxt の開発サーバー（localhost:3000）
    ├─ /api/_admin/preview … Nuxt Content と同じ変換（本番ビルドと同じ処理）で記事データにして返す
    ├─ /api/_admin/article … 記事リポジトリの articles/*.md の読み込み・保存・新規作成
-   └─ /api/_admin/articles … 記事一覧
+   ├─ /api/_admin/articles … 記事一覧
+   └─ /api/_admin/images … 画像を hisa-compress で変換して R2 にアップロード（POST）・記事の画像の一覧（GET）
+          │
+          ├─▶ hisa-compress（localhost:8000、Docker）
+          └─▶ Cloudflare R2（S3 互換 API）
 ```
 
 - 実装は `modules/local-admin/` にまとまっています。`modules/` 直下のモジュールは Nuxt が自動で読み込むので、

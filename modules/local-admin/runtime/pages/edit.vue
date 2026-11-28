@@ -30,12 +30,19 @@
     <div v-else class="flex-grow flex flex-col md:flex-row min-h-0">
       <div class="md:w-1/2 h-1/2 md:h-auto border-b md:border-b-0 md:border-r border-gray-300 flex flex-col min-h-0">
         <textarea
+          ref="editor"
           v-model="source"
           class="flex-grow w-full p-4 font-mono text-sm leading-relaxed resize-none focus:outline-none bg-white"
+          :class="{ 'ring-2 ring-inset ring-blue-400': dragging }"
           spellcheck="false"
           :disabled="loading"
           @keydown="onKeydown"
+          @dragover="onDragOver"
+          @dragleave="dragging = false"
+          @drop="onDrop"
+          @paste="onPaste"
         />
+        <ImageUploader ref="uploader" :file="file" :source="source" @insert="insertAtCursor" />
       </div>
       <div class="md:w-1/2 h-1/2 md:h-auto overflow-y-auto bg-gray-50">
         <p v-if="previewError" class="m-4 p-3 text-sm text-red-700 bg-red-50 rounded">
@@ -48,7 +55,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import {
   definePageMeta,
   onBeforeRouteLeave,
@@ -56,6 +70,8 @@ import {
   useRoute,
 } from "#imports";
 import ArticlePreview from "../components/ArticlePreview.vue";
+// biome-ignore lint/style/useImportType: テンプレートでコンポーネントとして使うため（Biome は .vue のテンプレートを見ない）
+import ImageUploader from "../components/ImageUploader.vue";
 
 definePageMeta({ layout: false });
 
@@ -169,6 +185,51 @@ function onKeydown(event: KeyboardEvent) {
     event.preventDefault();
     save();
   }
+}
+
+// ---- 画像のドロップ・貼り付け ----
+const editor = ref<HTMLTextAreaElement | null>(null);
+const uploader = ref<InstanceType<typeof ImageUploader> | null>(null);
+const dragging = ref(false);
+
+function hasFiles(event: DragEvent) {
+  return Array.from(event.dataTransfer?.types ?? []).includes("Files");
+}
+function onDragOver(event: DragEvent) {
+  if (!hasFiles(event)) return;
+  event.preventDefault();
+  dragging.value = true;
+}
+async function onDrop(event: DragEvent) {
+  dragging.value = false;
+  if (!hasFiles(event)) return;
+  // ブラウザが画像をそのまま開いてしまわないようにする
+  event.preventDefault();
+  await uploader.value?.addFiles(Array.from(event.dataTransfer?.files ?? []));
+}
+async function onPaste(event: ClipboardEvent) {
+  const files = Array.from(event.clipboardData?.files ?? []);
+  if (files.length === 0) return; // 文字の貼り付けはそのまま
+  event.preventDefault();
+  await uploader.value?.addFiles(files);
+}
+
+/** カーソル位置（最後にエディタで選んでいた位置）に Markdown を入れる。前後は改行で区切る */
+function insertAtCursor(markdown: string) {
+  const el = editor.value;
+  const pos = el ? el.selectionStart : source.value.length;
+  const before = source.value.slice(0, pos);
+  const after = source.value.slice(pos);
+  const prefix = before === "" || before.endsWith("\n") ? "" : "\n";
+  const suffix = after.startsWith("\n") ? "" : "\n";
+  const text = `${prefix}${markdown}${suffix}`;
+  source.value = before + text + after;
+  nextTick(() => {
+    if (!el) return;
+    el.focus();
+    el.selectionStart = pos + text.length;
+    el.selectionEnd = pos + text.length;
+  });
 }
 
 // 未保存のままタブを閉じたり、一覧へ戻ったりしないように確認する
